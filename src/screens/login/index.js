@@ -2,6 +2,7 @@ import {SafeAreaView, Image, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import styles from './stylesheet';
 import {Button, TextInput, Checkbox, Text, useTheme} from 'react-native-paper';
+import storage from '../../storage';
 
 const Login = ({navigation}) => {
     const [userName, setUserName] = useState('');
@@ -18,17 +19,38 @@ const Login = ({navigation}) => {
         setSecureTextEntry(!secureTextEntry);
     };
 
-    const login = () => {
+    const toggleRememberMe = () => {
+        setChecked(!checked);
+        if (checked) storage.delete('user');
+    };
+
+    const loginValidate = () => {
         if (userName === user.userName && password === user.password) {
             navigation.navigate('ProductsScreen');
         }
     };
 
     useEffect(() => {
+        const jsonUser = storage.getString('user');
+        if (jsonUser) {
+            const initialUser = JSON.parse(jsonUser);
+            setUserName(initialUser.userName);
+            setPassword(initialUser.password);
+            setChecked(true);
+        }
+    }, []);
+
+    useEffect(() => {
         if (checked) {
+            storage.set(
+                'user',
+                JSON.stringify({
+                    userName,
+                    password,
+                }),
+            );
         }
     }, [checked]);
-
     return (
         <SafeAreaView style={styles.container}>
             <Image
@@ -61,14 +83,12 @@ const Login = ({navigation}) => {
                     <Text variant="bodyMedium">Remember me !</Text>
                     <Checkbox
                         status={checked ? 'checked' : 'unchecked'}
-                        onPress={() => {
-                            setChecked(!checked);
-                        }}
+                        onPress={toggleRememberMe}
                     />
                 </View>
                 <Button
                     mode="contained"
-                    onPress={login}
+                    onPress={loginValidate}
                     style={{marginTop: 40}}>
                     Login
                 </Button>
@@ -76,5 +96,4 @@ const Login = ({navigation}) => {
         </SafeAreaView>
     );
 };
-
 export default Login;
