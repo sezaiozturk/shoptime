@@ -18,3 +18,7 @@ Bu uygulama, React Native kullanarak oluşturulmuş bir çalışma uygulamasıd�
 
 5. **Realm JS:**
    Realm, yerel olarak veri depolamak ve yönetmek için kullanılan bir JavaScript veritabanıdır. Uygulama, kullanıcıların yerel olarak veri saklamasını ve bu verileri etkileşimli bir şekilde kullanmasını sağlamak için Realm JS'i kullanır.
+
+    ![img1](/assets/images/1.png)
+    ![img2](/assets/images/2.png)
+    ![img3](/assets/images/3.png)

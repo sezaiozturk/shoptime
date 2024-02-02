@@ -22,22 +22,24 @@ const Products = () => {
     const [message, setMessage] = useState('');
     const [refresh, setRefresh] = useState(false);
     const realm = useRealm();
-    const realmProducts = useQuery(Product);
+    const [realmProducts, setRealmProducts] = useQuery(Product);
 
     const toggleSnack = () => setSnackVisible(!snackVisible);
 
     const saveDatabase = () => {
+        console.log(realmProducts);
         if (realmProducts.length === 0) {
             productList.map(item => {
                 realm.write(() => {
                     realm.create('Product', {
-                        _id: item.id,
+                        _id: parseInt(item.id),
                         image: item.image,
                         name: item.title,
-                        price: item.price,
+                        price: parseInt(item.price),
                     });
                 });
             });
+            setRealmProducts(useQuery(Product));
         } else {
             //Fark varsa güncellenecek
         }
@@ -55,7 +57,9 @@ const Products = () => {
     };
 
     const getFromDatabase = () => {
-        setProductList(realmProducts);
+        if (realmProducts) {
+            setProductList(realmProducts);
+        }
         toggleSnack();
         setMessage('From the Database');
     };
