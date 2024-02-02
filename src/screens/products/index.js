@@ -2,7 +2,14 @@ import {View, SafeAreaView, FlatList} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import styles from './stylesheet';
 import axios from 'axios';
-import {FAB, useTheme, Portal, Modal, Button} from 'react-native-paper';
+import {
+    FAB,
+    useTheme,
+    Portal,
+    Modal,
+    Button,
+    Snackbar,
+} from 'react-native-paper';
 import {InvoiceModal, ProductCard} from '../../components';
 import {useQuery, useRealm} from '@realm/react';
 import {Product} from '../../models/index';
@@ -10,54 +17,74 @@ import {Product} from '../../models/index';
 const Products = () => {
     const [productList, setProductList] = useState([]);
     const [visible, setVisible] = useState(false);
+    const [snackVisible, setSnackVisible] = useState(false);
+    const [latestDate, setLatestDate] = useState(new Date());
+    const [message, setMessage] = useState('');
     const [refresh, setRefresh] = useState(false);
     const realm = useRealm();
-    const theme = useTheme();
     const realmProducts = useQuery(Product);
 
-    const saveProduct = (id, image, name, price) => {
-        realm.write(() => {
-            realm.create('Product', {
-                _id: id,
-                image,
-                name,
-                price,
+    const toggleSnack = () => setSnackVisible(!snackVisible);
+
+    const saveDatabase = () => {
+        if (realmProducts.length === 0) {
+            productList.map(item => {
+                realm.write(() => {
+                    realm.create('Product', {
+                        _id: item.id,
+                        image: item.image,
+                        name: item.title,
+                        price: item.price,
+                    });
+                });
             });
+        } else {
+            //Fark varsa güncellenecek
+        }
+    };
+
+    const getFromApi = () => {
+        setRefresh(true);
+        axios.get('https://fakestoreapi.com/products').then(res => {
+            setRefresh(false);
+            setProductList(res.data);
+            toggleSnack();
+            setMessage('From the API');
+            saveDatabase();
         });
     };
 
-    useEffect(() => {
-        axios
-            .get('https://fakestoreapi.com/products')
-            .then(res => setProductList(res.data));
-        console.log(realmProducts);
-    }, []);
+    const getFromDatabase = () => {
+        setProductList(realmProducts);
+        toggleSnack();
+        setMessage('From the Database');
+    };
 
     useEffect(() => {
-        if (realmProducts.length == 0) {
-            productList.map(item =>
-                saveProduct(
-                    parseInt(item.id),
-                    item.image,
-                    item.title,
-                    parseInt(item.price),
-                ),
-            );
+        getFromApi();
+    }, []);
+
+    const refreshData = () => {
+        const nowDate = new Date();
+        if (nowDate - latestDate > 10000) {
+            getFromApi();
+        } else {
+            getFromDatabase();
         }
-    }, [productList]);
+        setLatestDate(nowDate);
+    };
 
     const renderItem = ({item}) => <ProductCard product={item} />;
 
     return (
         <SafeAreaView style={styles.container}>
-            <Button onPress={saveProduct}>Deneme</Button>
             <FlatList
                 data={productList}
                 renderItem={renderItem}
                 keyExtractor={item => item.id}
                 ItemSeparatorComponent={<View style={{height: 10}} />}
                 refreshing={refresh}
-                onRefresh={() => console.log('refresh')}
+                onRefresh={refreshData}
             />
             <FAB
                 icon="calculator"
@@ -72,6 +99,12 @@ const Products = () => {
                     <InvoiceModal />
                 </Modal>
             </Portal>
+            <Snackbar
+                visible={snackVisible}
+                duration={1000}
+                onDismiss={toggleSnack}>
+                {message}
+            </Snackbar>
         </SafeAreaView>
     );
 };
