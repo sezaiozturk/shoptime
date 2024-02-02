@@ -4,6 +4,8 @@ import {MD3LightTheme as DefaultTheme, PaperProvider} from 'react-native-paper';
 import Router from './src/router';
 import {NavigationContainer} from '@react-navigation/native';
 import {InvoiceProvider} from './src/context/invoiceContext';
+import {RealmProvider} from '@realm/react';
+import {Product} from './src/models';
 
 const theme = {
     ...DefaultTheme,
@@ -15,13 +17,15 @@ const theme = {
 
 const App = () => {
     return (
-        <InvoiceProvider>
-            <NavigationContainer>
-                <PaperProvider theme={theme}>
-                    <Router />
-                </PaperProvider>
-            </NavigationContainer>
-        </InvoiceProvider>
+        <RealmProvider schema={[Product]}>
+            <InvoiceProvider>
+                <NavigationContainer>
+                    <PaperProvider theme={theme}>
+                        <Router />
+                    </PaperProvider>
+                </NavigationContainer>
+            </InvoiceProvider>
+        </RealmProvider>
     );
 };
 
