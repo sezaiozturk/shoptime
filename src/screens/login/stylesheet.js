@@ -2,9 +2,9 @@ import {StyleSheet} from 'react-native';
 
 const style = StyleSheet.create({
     container: {
+        backgroundColor: 'white',
         justifyContent: 'center',
         flex: 1,
-        backgroundColor: 'white',
     },
     logo: {
         resizeMode: 'contain',

@@ -41,7 +41,7 @@ const Login = ({navigation}) => {
     }, []);
 
     useEffect(() => {
-        if (checked) {
+        if (checked && userName != '' && password != '') {
             storage.set(
                 'user',
                 JSON.stringify({

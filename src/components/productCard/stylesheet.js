@@ -13,8 +13,17 @@ const style = StyleSheet.create({
         backgroundColor: 'white',
         marginHorizontal: 20,
         borderRadius: 10,
-        minHeight: 200,
         padding: 20,
+        height: 200,
+    },
+    cover: {
+        borderRadius: 35,
+        height: 70,
+        width: 70,
+    },
+    title: {
+        height: 100,
+        gap: 30,
     },
 });
 
