@@ -1,5 +1,5 @@
-import {View, Text} from 'react-native';
-import React, {useState} from 'react';
+import {View} from 'react-native';
+import React from 'react';
 import styles from './stylesheet';
 import {IconButton, Card, useTheme} from 'react-native-paper';
 import {useInvoice} from '../../context/invoiceContext';
@@ -47,7 +47,7 @@ const ProductCard = ({product}) => {
                 <Card.Title
                     style={styles.title}
                     title={title}
-                    subtitle={`$ ${price}`}
+                    subtitle={`$ ${price.toFixed(2)}`}
                     left={() => <LeftContent image={image} />}
                     right={() => <RightContent id={id} />}
                 />

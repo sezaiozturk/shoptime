@@ -1,12 +1,12 @@
 export class Product extends Realm.Object {
     static schema = {
         name: 'Product',
-        primaryKey: '_id',
+        primaryKey: 'id',
         properties: {
-            _id: 'int',
+            id: 'int',
             image: 'string',
-            name: 'string',
-            price: 'int',
+            title: 'string',
+            price: 'float',
         },
     };
 }

@@ -2,44 +2,35 @@ import {View, SafeAreaView, FlatList} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import styles from './stylesheet';
 import axios from 'axios';
-import {
-    FAB,
-    useTheme,
-    Portal,
-    Modal,
-    Button,
-    Snackbar,
-} from 'react-native-paper';
+import {FAB, Portal, Modal, Snackbar} from 'react-native-paper';
 import {InvoiceModal, ProductCard} from '../../components';
 import {useQuery, useRealm} from '@realm/react';
 import {Product} from '../../models/index';
 
 const Products = () => {
-    const [productList, setProductList] = useState([]);
-    const [visible, setVisible] = useState(false);
-    const [snackVisible, setSnackVisible] = useState(false);
     const [latestDate, setLatestDate] = useState(new Date());
-    const [message, setMessage] = useState('');
+    const [snackVisible, setSnackVisible] = useState(false);
+    const [productList, setProductList] = useState([]);
     const [refresh, setRefresh] = useState(false);
+    const [visible, setVisible] = useState(false);
+    const [message, setMessage] = useState('');
     const realm = useRealm();
-    const [realmProducts, setRealmProducts] = useQuery(Product);
+    const realmProducts = useQuery(Product);
 
     const toggleSnack = () => setSnackVisible(!snackVisible);
 
     const saveDatabase = () => {
-        console.log(realmProducts);
         if (realmProducts.length === 0) {
             productList.map(item => {
                 realm.write(() => {
                     realm.create('Product', {
-                        _id: parseInt(item.id),
+                        id: parseInt(item.id),
                         image: item.image,
-                        name: item.title,
-                        price: parseInt(item.price),
+                        title: item.title,
+                        price: parseFloat(item.price),
                     });
                 });
             });
-            setRealmProducts(useQuery(Product));
         } else {
             //Fark varsa güncellenecek
         }
@@ -52,21 +43,24 @@ const Products = () => {
             setProductList(res.data);
             toggleSnack();
             setMessage('From the API');
-            saveDatabase();
         });
     };
 
     const getFromDatabase = () => {
         if (realmProducts) {
             setProductList(realmProducts);
+            toggleSnack();
+            setMessage('From the Database');
         }
-        toggleSnack();
-        setMessage('From the Database');
     };
 
     useEffect(() => {
         getFromApi();
     }, []);
+
+    useEffect(() => {
+        saveDatabase();
+    }, [productList]);
 
     const refreshData = () => {
         const nowDate = new Date();
