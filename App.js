@@ -1,4 +1,3 @@
-import {SafeAreaView} from 'react-native';
 import React from 'react';
 import {MD3LightTheme as DefaultTheme, PaperProvider} from 'react-native-paper';
 import Router from './src/router';

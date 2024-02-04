@@ -12,7 +12,7 @@ const InvoiceModal = () => {
         <View style={{flexDirection: 'row'}}>
             <Text style={{flex: 2}}>{item.title.slice(0, 10)}...</Text>
             <Text style={{flex: 1.4}}>{item.quantity}</Text>
-            <Text style={{flex: 0.6}}>{item.price}</Text>
+            <Text style={{flex: 0.6}}>{item.price.toFixed(2)}</Text>
         </View>
     );
 
